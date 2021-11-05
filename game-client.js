@@ -227,6 +227,7 @@ drawShip = function () {
 
 //socket connection
 const socket = new WebSocket('ws://localhost:8082');
+var sessionId;
 
 socket.onopen = function (event) {
 	console.log("Websocket connection established.");
@@ -236,6 +237,9 @@ socket.onmessage = function (event) {
 	//console.log(event.data);
 	var data = JSON.parse(event.data);
 	switch (data.type) {
+		case 'session':
+			sessionId = data.session;
+			break;
 		case 'update':
 			updateStats(data);
 			break;
@@ -243,6 +247,7 @@ socket.onmessage = function (event) {
 }
 
 function sendJSON(json) {
+	json.session = sessionId;
 	socket.send(JSON.stringify(json));
 }
 

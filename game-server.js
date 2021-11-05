@@ -1,6 +1,8 @@
 module.exports = class Game {
-	constructor() {
+	constructor(id) {
 		console.log("new Game instance");
+
+		this.sessionId = id;
 
 		this.aliens = [1, 3, 5, 7, 9, 23, 25, 27, 29, 31];
 		this.ship = [104, 114, 115, 116];
@@ -201,5 +203,9 @@ module.exports = class Game {
 			score: this.score,
 			special: this.event,
 		}
+	}
+
+	getId() {
+		return this.sessionId;
 	}
 }

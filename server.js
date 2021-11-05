@@ -10,8 +10,12 @@ const port = {
 };
 const socketServer = new ws.Server({ port: port.socket });
 
-//!temp
-var game;
+//game hashmap
+var games = {};
+function key(obj) {
+	return obj.getId();
+}
+var lastId = -1;
 
 // GET / -> render static index.html
 app.get('/', (req, res) => {
@@ -24,7 +28,14 @@ socketServer.on('connection', (ws) => {
 	console.log('New connection');
 
 	//create new game session
-	game = new Game();
+	var newSessionId = ++lastId;
+	var newGame = new Game(newSessionId);
+
+	games[key(newGame)] = newGame;
+	ws.send(JSON.stringify({
+		type: 'session',
+		session: newSessionId,
+	}))
 
 	//listener
 	ws.on('message', (message) => onReceived(ws, message.toString()));
@@ -32,6 +43,8 @@ socketServer.on('connection', (ws) => {
 
 function onReceived(ws, message) {
 	message = JSON.parse(message);
+	var game = games[message.session];
+
 	switch (message.type) {
 		case 'keypress':
 			game.handleKeyEvent(message.key);
