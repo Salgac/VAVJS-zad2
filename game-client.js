@@ -27,6 +27,7 @@ const scoreInfo = document.createElement("h4")
 const levelInfo = document.createElement("h4")
 const music = document.createElement("button")
 const space = document.getElementById("space")
+const highscoreInfo = document.createElement("h4")
 
 //key codes
 const KEY_LEFT = 37
@@ -58,6 +59,8 @@ missileImg.src = missileUrl
 //score and level
 var currentLevel = 0;
 var score = 0
+var highScore = localStorage.getItem('highscore');
+highScore == null ? highScore = 0 : highScore;
 const SCORE_MULTIPLIER = 10
 
 initCanvas()
@@ -82,6 +85,7 @@ function initCanvas() {
 
 	//add score and level info
 	space.appendChild(scoreInfo)
+	space.appendChild(highscoreInfo)
 	space.appendChild(levelInfo)
 	infoUpdater()
 
@@ -100,6 +104,7 @@ function initCanvas() {
 function infoUpdater() {
 	setInterval(function () {
 		scoreInfo.innerHTML = "Score: " + score;
+		highscoreInfo.innerHTML = "Highscore: " + highScore;
 		levelInfo.innerHTML = "Level: " + currentLevel;
 	}, 1000)
 }
@@ -159,7 +164,13 @@ function fillAt(image, field) {
 // loose override
 loose = function () {
 	fillBackground("red")
+
+	//stop game
 	running = false;
+	for (var i = 0; i < 1000; i++) {
+		window.clearInterval(i);
+	}
+	infoUpdater();
 }
 
 // win override
@@ -302,6 +313,7 @@ function updateStats(data) {
 		switch (data.special) {
 			case 'loose':
 				loose();
+				setHighscore(data.score);
 				break;
 			case 'win':
 				win();
@@ -316,4 +328,11 @@ function updateStats(data) {
 	missiles = data.missiles;
 	currentLevel = data.level;
 	score = data.score;
+}
+
+function setHighscore(score) {
+	if (score > highScore) {
+		highScore = score;
+		localStorage.setItem('highscore', highScore);
+	}
 }
