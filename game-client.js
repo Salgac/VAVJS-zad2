@@ -159,13 +159,13 @@ function fillAt(image, field) {
 // loose override
 loose = function () {
 	fillBackground("red")
-	running = false
+	running = false;
 }
 
 // win override
 win = function () {
 	fillBackground("green")
-	currentLevel++;
+	running = false;
 }
 
 // drawSpace override
@@ -247,6 +247,7 @@ function gameLoop() {
 		type: 'game',
 		value: 'start',
 	});
+	running = true;
 
 	//start client loop
 	var loop2 = setInterval(function () {
@@ -257,10 +258,12 @@ function gameLoop() {
 		});
 
 		//draw
-		drawSpace();
-		drawAliens();
-		drawMissiles();
-		drawShip();
+		if (running) {
+			drawSpace();
+			drawAliens();
+			drawMissiles();
+			drawShip();
+		}
 	}, speed / 2);
 }
 
@@ -295,6 +298,19 @@ function resetGame() {
 }
 
 function updateStats(data) {
+	if (data.special != '') {
+		switch (data.special) {
+			case 'loose':
+				loose();
+				break;
+			case 'win':
+				win();
+				break;
+		}
+	} else {
+		running = true;
+	}
+
 	ship = data.ship;
 	aliens = data.aliens;
 	missiles = data.missiles;

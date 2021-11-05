@@ -67,10 +67,12 @@ function nextLevel() {
 
 var running = false;
 var loop;
+var event = '';
 function gameLoop() {
 	console.log('gameloop');
 
 	running = true;
+	event = '';
 
 	var a = 0;
 	loop = setInterval(function () {
@@ -82,10 +84,12 @@ function gameLoop() {
 			clearInterval(loop);
 			missiles = [];
 			running = false;
+			event = 'loose';
 		}
 		if (aliens.length === 0) {
 			clearInterval(loop);
 			missiles = [];
+			event = 'win';
 			setTimeout(function () {
 				nextLevel();
 			}, 1000);
@@ -148,6 +152,7 @@ function resetGame() {
 
 handleKeyEvent = function (keyCode) {
 	//console.log(keyCode);
+	if (!running) return;
 	switch (keyCode) {
 		//move left
 		case KEY_LEFT:
@@ -179,7 +184,7 @@ handleKeyEvent = function (keyCode) {
 //exports
 module.exports = {
 	handleKeyEvent: function (keyCode) { handleKeyEvent(keyCode) },
-	startGame: function () { gameLoop() },
+	startGame: function () { resetGame(); gameLoop() },
 	resetGame: function () { resetGame() },
 	getData: function () {
 		return {
@@ -189,6 +194,7 @@ module.exports = {
 			missiles: missiles,
 			level: currentLevel,
 			score: score,
+			special: event,
 		}
 	},
 }
