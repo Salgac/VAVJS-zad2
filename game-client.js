@@ -29,6 +29,11 @@ const music = document.createElement("button")
 const space = document.getElementById("space")
 const highscoreInfo = document.createElement("h4")
 
+const keyLeft = document.createElement("button")
+const keyRight = document.createElement("button")
+const keyShoot = document.createElement("button")
+
+
 //key codes
 const KEY_LEFT = 37
 const KEY_RIGHT = 39
@@ -82,6 +87,16 @@ function initCanvas() {
 	music.innerHTML = "Music"
 	music.addEventListener("click", playMusic)
 	document.body.appendChild(music)
+
+	//add key buttons
+	keyLeft.innerHTML = "<-";
+	keyRight.innerHTML = "->";
+	keyShoot.innerHTML = "Shoot!";
+
+	space.appendChild(document.createElement('br'));
+	space.appendChild(keyLeft);
+	space.appendChild(keyRight);
+	space.appendChild(keyShoot);
 
 	//add score and level info
 	space.appendChild(scoreInfo)
@@ -231,6 +246,13 @@ function sendJSON(json) {
 	socket.send(JSON.stringify(json));
 }
 
+function sendKeyPress(keyCode) {
+	sendJSON({
+		type: 'keypress',
+		key: keyCode,
+	});
+}
+
 //key press listening
 document.addEventListener('keydown', (e) => {
 	e = e || window.event;
@@ -243,13 +265,14 @@ document.addEventListener('keydown', (e) => {
 		case KEY_L:
 		//shoot
 		case KEY_SPACE:
-			sendJSON({
-				type: 'keypress',
-				key: e.keyCode,
-			});
+			sendKeyPress(e.keyCode);
 	}
 	debug && console.log("Keyboard key pressed.");
 });
+
+keyLeft.addEventListener('click', () => sendKeyPress(KEY_LEFT));
+keyRight.addEventListener('click', () => sendKeyPress(KEY_RIGHT));
+keyShoot.addEventListener('click', () => sendKeyPress(KEY_SPACE));
 
 //game loop
 function gameLoop() {
