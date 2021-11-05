@@ -1,7 +1,7 @@
 const express = require('express');
 const ws = require('ws');
 
-const game = require('./game-server');
+const Game = require('./game-server');
 
 const app = express();
 const port = {
@@ -9,6 +9,9 @@ const port = {
 	socket: 8082,
 };
 const socketServer = new ws.Server({ port: port.socket });
+
+//!temp
+var game;
 
 // GET / -> render static index.html
 app.get('/', (req, res) => {
@@ -19,6 +22,11 @@ app.get('/', (req, res) => {
 // setup WS
 socketServer.on('connection', (ws) => {
 	console.log('New connection');
+
+	//create new game session
+	game = new Game();
+
+	//listener
 	ws.on('message', (message) => onReceived(ws, message.toString()));
 })
 
