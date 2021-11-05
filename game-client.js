@@ -240,8 +240,15 @@ socket.onmessage = function (event) {
 		case 'session':
 			sessionId = data.session;
 			break;
+		case 'sessionList':
+			sessionList = data.list;
+			regenerateSessionView();
+			break;
 		case 'update':
 			updateStats(data);
+			break;
+		case 'reset':
+			resetGame();
 			break;
 	}
 }
@@ -279,6 +286,14 @@ keyLeft.addEventListener('click', () => sendKeyPress(KEY_LEFT));
 keyRight.addEventListener('click', () => sendKeyPress(KEY_RIGHT));
 keyShoot.addEventListener('click', () => sendKeyPress(KEY_SPACE));
 
+
+function drawGame() {
+	drawSpace();
+	drawAliens();
+	drawMissiles();
+	drawShip();
+}
+
 //game loop
 function gameLoop() {
 	//init game on server
@@ -298,10 +313,7 @@ function gameLoop() {
 
 		//draw
 		if (running) {
-			drawSpace();
-			drawAliens();
-			drawMissiles();
-			drawShip();
+			drawGame();
 		}
 	}, speed / 2);
 }
@@ -323,15 +335,16 @@ function resetGame() {
 	//remove data
 	drawSpace();
 
-	//set original values
-	aliens = [1, 3, 5, 7, 9, 23, 25, 27, 29, 31];
-	direction = 1;
-	ship = [104, 114, 115, 116];
+	//clear values
+	aliens = [];
+	ship = [];
 	missiles = [];
 	level = 1;
 	currentLevel = 1;
 	speed = 512;
 	score = 0;
+
+	regenerateSessionView();
 
 	debug && console.log("Game reset.");
 }
@@ -363,4 +376,66 @@ function setHighscore(score) {
 		highScore = score;
 		localStorage.setItem('highscore', highScore);
 	}
+}
+
+//sessions
+const sessionDiv = document.createElement("div");
+const sessionHeader = document.createElement("h3");
+const sessionUl = document.createElement("ul");
+sessionHeader.innerHTML = "Active sessions";
+sessionDiv.appendChild(sessionHeader);
+
+var sessionList = [];
+
+function regenerateSessionView() {
+	//remove previous if any
+	while (sessionUl.firstChild) {
+		sessionUl.firstChild.remove();
+	}
+
+	//generate list
+	sessionList.forEach(session => {
+		var li = document.createElement("li");
+		var a = document.createElement("a");
+
+		if (session != sessionId) {
+			a.innerHTML = session;
+			a.setAttribute("style", "text-decoration: underline;");
+			a.setAttribute("href", "#");
+			a.onclick = () => {
+				watchLoop(session);
+				a.innerHTML = `${session} - currently watching - Stop`;
+				a.onclick = () => {
+					clearInterval(watchInterval);
+					running = false;
+					regenerateSessionView();
+					drawSpace();
+				}
+			}
+		}
+		else {
+			a.innerHTML = `${session} - current session`;
+		}
+
+		li.appendChild(a);
+		sessionUl.appendChild(li);
+	})
+	sessionDiv.appendChild(sessionUl);
+	document.body.appendChild(sessionDiv);
+}
+
+var watchInterval;
+function watchLoop(sessionId) {
+	watchInterval = setInterval(function () {
+		//update data from server
+		sendJSON({
+			type: 'watch',
+			id: sessionId,
+		});
+
+		//draw
+		if (running) {
+			drawGame();
+		}
+	}, speed / 2);
 }

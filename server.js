@@ -17,6 +17,9 @@ function key(obj) {
 }
 var lastId = -1;
 
+//ws list
+var sockets = [];
+
 // GET / -> render static index.html
 app.get('/', (req, res) => {
 	const path = require('path');
@@ -26,6 +29,7 @@ app.get('/', (req, res) => {
 // setup WS
 socketServer.on('connection', (ws) => {
 	console.log('New connection');
+	sockets.push(ws);
 
 	//create new game session
 	var newSessionId = ++lastId;
@@ -37,8 +41,17 @@ socketServer.on('connection', (ws) => {
 		session: newSessionId,
 	}))
 
+	//send running sessions data
+	onSessionUpdate();
+
 	//listener
 	ws.on('message', (message) => onReceived(ws, message.toString()));
+
+	ws.on('close', () => {
+		delete games[newSessionId]
+		sockets.pop(ws);
+		onSessionUpdate();
+	});
 })
 
 function onReceived(ws, message) {
@@ -62,7 +75,22 @@ function onReceived(ws, message) {
 					break;
 			}
 			break;
+		case 'watch':
+			var wg = games[message.id];
+			if (wg != undefined)
+				ws.send(JSON.stringify(wg.getData()));
+			else
+				ws.send(JSON.stringify({ type: 'reset' }));
+			break;
 	}
+}
+
+function onSessionUpdate() {
+	sockets.forEach((ws) =>
+		ws.send(JSON.stringify({
+			type: 'sessionList',
+			list: Object.keys(games),
+		})));
 }
 
 //setup servers
