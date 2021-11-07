@@ -74,6 +74,7 @@ module.exports = class Game {
 
 	nextLevel() {
 		this.level++;
+		this.currentLevel++;
 		console.log('level: ' + this.level);
 		if (this.level == 1) this.aliens = [1, 3, 5, 7, 9, 23, 25, 27, 29, 31];
 		if (this.level == 2) this.aliens = [1, 3, 5, 7, 9, 13, 15, 17, 19, 23, 25, 27, 29, 31];
