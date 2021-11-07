@@ -15,13 +15,13 @@ Cielom ulohy bude prepisat vesmirnu hru z client-side verzie na server-side verz
 | 7   | na stranke umoznit registraciu a prihlasenie pouzivatelov - e-mail, login, heslo (2x pri registracii), meno a priezvisko  | 1   | &#9745; |
 | 8   | zdielanie session medzi backendom (server) a frontedom (browser)                                                          | 1   | &#9745; |
 | 9   | serverside ukladanie max skore a levelu pre prihlaseneho pouzivatela a neprihlaseneho pouzivatela                         | 1   | &#9745; |
-| 10  | admin rozhranie zobrazujuce tabulku pouzivatelov a aktualnych hier (meno ak je, session, pin) len pre pouzivatela "admin" | 1   |
-| 11  | import a export CSV udajov pouzivatelov (meno, email, heslo, max score, max level) len pre pouzivatela "admin"            | 1   |
+| 10  | admin rozhranie zobrazujuce tabulku pouzivatelov a aktualnych hier (meno ak je, session, pin) len pre pouzivatela "admin" | 1   | &#9745; |
+| 11  | import a export CSV udajov pouzivatelov (meno, email, heslo, max score, max level) len pre pouzivatela "admin"            | 1   | &#9744; |
 | 12  | zobrazit zoznam aktualne hranych hier s moznostou sledovania pre vsetkych pouzivatelov                                    | 1   | &#9745; |
 | 13  | vyuzitie objektovej reprezentacie struktury stranky                                                                       | 1   | &#9744; |
 | 14  | server vracia 1 staticku stranku (index.html, obrazky, js subory), ostatna komunikacia (plocha, interakcia) pouziva JSON  | 1   | &#9745; |
-| 15  | kontrola vstupov (email, login, heslo, kod, meno a priezvisko)                                                            | 1   |
-| SUM |                                                                                                                           | 15  | 10      |
+| 15  | kontrola vstupov (email, login, heslo, kod, meno a priezvisko)                                                            | 1   | &#9744; |
+| SUM |                                                                                                                           | 15  | 11 (+1) |
  
 ##### 13. Inspiracia:
 ```

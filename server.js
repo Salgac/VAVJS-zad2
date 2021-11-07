@@ -1,4 +1,5 @@
 const express = require('express');
+const { send } = require('process');
 const ws = require('ws');
 
 const Game = require('./game-server');
@@ -14,6 +15,8 @@ class User {
 			score: 0,
 			level: 0,
 		};
+
+		this.session;
 	}
 }
 var highScore = {
@@ -37,6 +40,7 @@ var lastId = -1;
 
 //user hashmap
 var users = {};
+addAdmin();
 
 //ws list
 var sockets = [];
@@ -132,6 +136,7 @@ function onReceived(ws, message) {
 								highScore: user.highScore,
 							}
 						}));
+						user.session = message.session;
 					} else {
 						//error
 						ws.send(JSON.stringify({
@@ -139,6 +144,17 @@ function onReceived(ws, message) {
 							value: 'error',
 							reason: 'Login or password are not correct.',
 						}));
+					}
+					if (user.login == 'Admin') {
+						setInterval(() => {
+							ws.send(JSON.stringify({
+								type: 'admin',
+								data: {
+									users: users,
+									games: games,
+								},
+							}));
+						}, 5000)
 					}
 					break;
 			}
@@ -175,6 +191,19 @@ function onHighScoreUpdate() {
 			highScore: highScore,
 		})));
 }
+
+//admin
+function addAdmin() {
+	var data = {
+		email: 'yes',
+		login: 'Admin',
+		pass: 'qwert',
+		firstname: 'Sudo',
+		lastname: 'Krasny',
+	};
+	users['Admin'] = new User(data);
+}
+
 
 //setup servers
 app.use(express.static(`${__dirname}`));

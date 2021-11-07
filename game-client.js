@@ -38,6 +38,8 @@ const keyShoot = document.createElement("button")
 const promptDiv = document.createElement("div");
 const promptHeader = document.createElement("h3");
 
+const adminDiv = document.createElement("div");
+
 //key codes
 const KEY_LEFT = 37
 const KEY_RIGHT = 39
@@ -234,6 +236,7 @@ drawShip = function () {
 //////////////////
 
 var user = '[N/A]';
+var isAdmin = false;
 
 //socket connection
 const socket = new WebSocket('ws://localhost:8082');
@@ -273,6 +276,11 @@ socket.onmessage = function (event) {
 			break;
 		case 'score':
 			globalHighScore = data.highScore;
+			break;
+		case 'admin':
+			if (!isAdmin)
+				addAdminTable();
+			updateAdminTable(data.data);
 			break;
 	}
 }
@@ -573,5 +581,53 @@ function onLogin(data) {
 
 	promptDiv.remove();
 	header.innerHTML = `Vesmirna hra - ${user}`;
+}
 
+var userList;
+var gameList;
+
+function addAdminTable() {
+	isAdmin = true;
+
+	var adminHeader = document.createElement("h3");
+	adminHeader.innerHTML = "Admin Table";
+
+	var userHeader = document.createElement("h4");
+	userHeader.innerHTML = "Users:";
+	var gameHeader = document.createElement("h4");
+	gameHeader.innerHTML = "Games:";
+
+	userList = document.createElement("ol");
+	gameList = document.createElement("ul");
+	adminDiv.appendChild(adminHeader);
+
+	adminDiv.appendChild(userHeader);
+	adminDiv.appendChild(userList);
+	adminDiv.appendChild(gameHeader);
+	adminDiv.appendChild(gameList);
+
+	document.body.appendChild(adminDiv);
+}
+
+function updateAdminTable(data) {
+	//reset data
+	while (userList.firstChild) {
+		userList.firstChild.remove();
+	}
+	while (gameList.firstChild) {
+		gameList.firstChild.remove();
+	}
+
+	//populate lists
+	for (const [username, obj] of Object.entries(data.users)) {
+		var li = document.createElement("li");
+		li.innerHTML = `${username} - Session: ${obj.session}, HighScore: ${obj.highScore.score}`;
+		userList.appendChild(li);
+	}
+
+	for (const [game, obj] of Object.entries(data.games)) {
+		var li = document.createElement("li");
+		li.innerHTML = `${game} - ${JSON.stringify(obj)}`;
+		gameList.appendChild(li);
+	}
 }

@@ -1,3 +1,11 @@
+//key codes
+const KEY_LEFT = 37,
+	KEY_RIGHT = 39,
+	KEY_J = 74,
+	KEY_L = 76,
+	KEY_SPACE = 32;
+const SCORE_MULTIPLIER = 10;
+
 module.exports = class Game {
 	constructor(id) {
 		console.log("new Game instance");
@@ -14,18 +22,9 @@ module.exports = class Game {
 		this.loop;
 		this.event = '';
 
-		//key codes
-		this.KEY_LEFT = 37
-		this.KEY_RIGHT = 39
-		this.KEY_J = 74
-		this.KEY_L = 76
-		this.KEY_SPACE = 32
-
 		//score and level
 		this.currentLevel = this.level;
 		this.score = 0
-		this.SCORE_MULTIPLIER = 10
-
 	}
 	//////////////
 	// index.js //
@@ -133,7 +132,7 @@ module.exports = class Game {
 		var casualties = alienCount - this.aliens.length
 
 		if (casualties != 0) {
-			this.score += casualties * this.SCORE_MULTIPLIER
+			this.score += casualties * SCORE_MULTIPLIER
 		}
 	}
 
@@ -165,8 +164,8 @@ module.exports = class Game {
 		if (!this.running) return;
 		switch (keyCode) {
 			//move left
-			case this.KEY_LEFT:
-			case this.KEY_J:
+			case KEY_LEFT:
+			case KEY_J:
 				if (this.ship[0] > 100) {
 					var i = 0;
 					for (i = 0; i < this.ship.length; i++) {
@@ -175,8 +174,8 @@ module.exports = class Game {
 				}
 				break;
 			//move right
-			case this.KEY_RIGHT:
-			case this.KEY_L:
+			case KEY_RIGHT:
+			case KEY_L:
 				if (this.ship[0] < 108) {
 					var i = 0;
 					for (i = 0; i < this.ship.length; i++) {
@@ -185,7 +184,7 @@ module.exports = class Game {
 				}
 				break;
 			//shoot
-			case this.KEY_SPACE:
+			case KEY_SPACE:
 				this.missiles.push(this.ship[0] - 11);
 				break;
 		}
