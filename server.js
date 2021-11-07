@@ -2,6 +2,15 @@ const express = require('express');
 const ws = require('ws');
 
 const Game = require('./game-server');
+class User {
+	constructor(data) {
+		this.email = data.email;
+		this.login = data.login;
+		this.pass = data.pass;
+		this.firstname = data.firstname;
+		this.lastname = data.lastname;
+	}
+}
 
 const app = express();
 const port = {
@@ -16,6 +25,9 @@ function key(obj) {
 	return obj.getId();
 }
 var lastId = -1;
+
+//user hashmap
+var users = {};
 
 //ws list
 var sockets = [];
@@ -82,7 +94,47 @@ function onReceived(ws, message) {
 			else
 				ws.send(JSON.stringify({ type: 'reset' }));
 			break;
+		case 'auth':
+			switch (message.value) {
+				case 'register':
+					var newUser = new User(message.data);
+					if (isUnique(newUser.login))
+						users[newUser.login] = newUser;
+					else {
+						ws.send(JSON.stringify({
+							type: 'auth',
+							value: 'error',
+							reason: 'Login name already in use.',
+						}));
+						break;
+					}
+				case 'login':
+					var user = users[message.data.login];
+					if (user != null && user.pass === message.data.pass) {
+						//login succesfull
+						ws.send(JSON.stringify({
+							type: 'auth',
+							value: 'login',
+							data: {
+								login: user.login,
+							}
+						}));
+					} else {
+						//error
+						ws.send(JSON.stringify({
+							type: 'auth',
+							value: 'error',
+							reason: 'Login or password are not correct.',
+						}));
+					}
+					break;
+			}
+			break;
 	}
+}
+
+function isUnique(login) {
+	return users[login] == undefined;
 }
 
 function onSessionUpdate() {

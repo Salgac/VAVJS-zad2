@@ -22,6 +22,8 @@ const PIXEL_SIZE = 42
 const canvas = document.createElement("canvas")
 var ctx = canvas.getContext("2d")
 
+const header = document.getElementsByTagName('h1')[0];
+
 const reset = document.createElement("button")
 const scoreInfo = document.createElement("h4")
 const levelInfo = document.createElement("h4")
@@ -33,6 +35,8 @@ const keyLeft = document.createElement("button")
 const keyRight = document.createElement("button")
 const keyShoot = document.createElement("button")
 
+const promptDiv = document.createElement("div");
+const promptHeader = document.createElement("h3");
 
 //key codes
 const KEY_LEFT = 37
@@ -103,6 +107,9 @@ function initCanvas() {
 	space.appendChild(highscoreInfo)
 	space.appendChild(levelInfo)
 	infoUpdater()
+
+	//add login/register prompt
+	setupPrompt();
 
 	//setup debugging
 	if (window.location.search == '?debug') {
@@ -250,6 +257,15 @@ socket.onmessage = function (event) {
 		case 'reset':
 			resetGame();
 			break;
+		case 'auth':
+			switch (data.value) {
+				case 'login':
+					onLogin(data.data);
+					break;
+				case 'error':
+					alert(`Auth error. Reason: ${data.reason}`);
+					break;
+			}
 	}
 }
 
@@ -438,4 +454,100 @@ function watchLoop(sessionId) {
 			drawGame();
 		}
 	}, speed / 2);
+}
+
+//login/register
+function setupPrompt() {
+	promptHeader.innerHTML = "Login / Register";
+	promptDiv.appendChild(promptHeader);
+
+	var loginButton = document.createElement("button");
+	var registerButton = document.createElement("button");
+	loginButton.innerHTML = "Login";
+	registerButton.innerHTML = "Register";
+
+	loginButton.onclick = () => {
+		showForm('login');
+	}
+	registerButton.onclick = () => {
+		showForm('register');
+	}
+
+	promptDiv.appendChild(loginButton);
+	promptDiv.appendChild(registerButton);
+	document.body.appendChild(promptDiv);
+}
+
+function showForm(type) {
+	deleteForm();
+
+	var form = document.createElement('form');
+	var login = createInput('text', "Login");
+	var pass = createInput('password', "Password");
+	var submit = document.createElement("button");
+	submit.innerHTML = "Submit";
+
+	form.appendChild(login);
+	form.appendChild(pass);
+
+	if (type == "register") {
+		var passAgain = createInput('password', 'Repeat Password');
+		var email = createInput('text', 'Email');
+		var firstname = createInput('text', 'First Name');
+		var lastname = createInput('text', 'Last Name');
+
+		form.appendChild(passAgain);
+		form.appendChild(email);
+		form.appendChild(firstname);
+		form.appendChild(lastname);
+
+		submit.onclick = () => {
+			if (pass.value != passAgain.value) { return };
+			sendJSON({
+				type: 'auth',
+				value: 'register',
+				data: {
+					login: login.value,
+					pass: pass.value,
+					email: email.value,
+					firstname: firstname.value,
+					lastname: lastname.value,
+
+				},
+			});
+			deleteForm();
+		}
+	}
+	else {
+		submit.onclick = () => {
+			sendJSON({
+				type: 'auth',
+				value: 'login',
+				data: {
+					login: login.value,
+					pass: pass.value,
+				},
+			});
+			deleteForm();
+		}
+	}
+	form.appendChild(submit);
+	promptDiv.appendChild(form);
+}
+
+function deleteForm() {
+	var c = promptDiv.lastChild;
+	if (c.nodeName == "FORM") c.remove();
+}
+
+function createInput(type, placeholder) {
+	var input = document.createElement('input');
+	input.setAttribute("type", type);
+	input.setAttribute("placeholder", placeholder);
+	return input;
+}
+
+function onLogin(data) {
+	promptDiv.remove();
+	header.innerHTML = `Vesmirna hra - ${data.login}`;
 }
