@@ -109,4 +109,18 @@ V pripade ak chcete vyuzit dospelacku DB (MariaDB/MySQL, PostrgeSQL, MongoDB, ..
 
 ## Vypracovanie
 
-In development
+Zadanie bolo vypracovane podla poziadaviek, pre vsetky vyssie uvedene body v tabulke s oznacenim &#9745;. Pri prazdnom oznaceni (&#9744;), ide o body zadania ktore som sa rozhodol neimplementovat, pre casove a psychicke dovody.
+
+### Par dovysvetliviek ku vybranym bodom:
+
+ - 6 - Boli pridane iba tlacidla na obrazovku, ktorymi je mozne ovladat hru. Pin nebol implementovany a nieje mozne ovladat inu session ako aktualnu.
+ - 7 - Registracia umoznuje iba uzivatelov unikatnych podla pola 'Login'.
+ - 9 - Maximalne skore a level sa pri prihlasenych pouzivateloch ukladaju ku ich kontu na serveri, pri neprihlasenych pouzivateloch sa pouziva LocalStorage.
+ - 10 - Po prihlaseni Admina (login: Admin, heslo: qwert), sa zobrazi a po 5 sekundach vzdy aktualizuje zoznam pouzivatelov, ich poslednej session a najlepsieho skore, a takisto zoznam hier, aj s vsetkymi zaujimavymi parametrami, ako su score, level, postavenie rakety, alienov, striel...
+ - 12 - V spodnej casti obrazovky je okno s aktualnymi sessions. Po kliknuti na link ku inej session ako aktualnej sa herna obrazovka prepne na obrazovku zvolenej session. Po opatovnom kliknuti na link sessiony sa sledovanie skonci a je mozne hrat vo svojej session hru. Rovnaku funkcionalitu splna aj tlacidlo 'Reset'.
+
+### Hosting
+
+Aplikacia je dostupna k nahliadnutiu/hraniu na serveri:
+
+    http://139.162.130.177:8080/
