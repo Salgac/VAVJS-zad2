@@ -1,3 +1,4 @@
+// Dominik Salgovic
 const express = require('express');
 const { send } = require('process');
 const ws = require('ws');

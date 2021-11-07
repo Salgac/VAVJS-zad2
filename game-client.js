@@ -1,3 +1,5 @@
+// Dominik Salgovic
+
 //////////////
 // index.js //
 //////////////

@@ -1,3 +1,5 @@
+// Dominik Salgovic
+
 //key codes
 const KEY_LEFT = 37,
 	KEY_RIGHT = 39,
