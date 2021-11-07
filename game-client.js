@@ -26,10 +26,10 @@ const header = document.getElementsByTagName('h1')[0];
 
 const reset = document.createElement("button")
 const scoreInfo = document.createElement("h4")
-const levelInfo = document.createElement("h4")
 const music = document.createElement("button")
 const space = document.getElementById("space")
 const highscoreInfo = document.createElement("h4")
+const globalHighscoreInfo = document.createElement("h4")
 
 const keyLeft = document.createElement("button")
 const keyRight = document.createElement("button")
@@ -70,6 +70,7 @@ var currentLevel = 0;
 var score = 0
 var highScore = localStorage.getItem('highscore');
 highScore == null ? highScore = 0 : highScore;
+var globalHighScore = { score: 0, level: 0 };
 const SCORE_MULTIPLIER = 10
 
 initCanvas()
@@ -105,7 +106,7 @@ function initCanvas() {
 	//add score and level info
 	space.appendChild(scoreInfo)
 	space.appendChild(highscoreInfo)
-	space.appendChild(levelInfo)
+	space.appendChild(globalHighscoreInfo)
 	infoUpdater()
 
 	//add login/register prompt
@@ -125,9 +126,9 @@ function initCanvas() {
 // 
 function infoUpdater() {
 	setInterval(function () {
-		scoreInfo.innerHTML = "Score: " + score;
-		highscoreInfo.innerHTML = "Highscore: " + highScore;
-		levelInfo.innerHTML = "Level: " + currentLevel;
+		scoreInfo.innerHTML = "Score: " + score + ", Level: " + currentLevel;
+		highscoreInfo.innerHTML = "Your Highscore: " + highScore;
+		globalHighscoreInfo.innerHTML = "Global Highscore: " + globalHighScore.score + ", Level: " + globalHighScore.level;
 	}, 1000)
 }
 
@@ -232,6 +233,8 @@ drawShip = function () {
 // client logic //
 //////////////////
 
+var user = '[N/A]';
+
 //socket connection
 const socket = new WebSocket('ws://localhost:8082');
 var sessionId;
@@ -246,6 +249,7 @@ socket.onmessage = function (event) {
 	switch (data.type) {
 		case 'session':
 			sessionId = data.session;
+			globalHighScore = data.highScore;
 			break;
 		case 'sessionList':
 			sessionList = data.list;
@@ -266,11 +270,16 @@ socket.onmessage = function (event) {
 					alert(`Auth error. Reason: ${data.reason}`);
 					break;
 			}
+			break;
+		case 'score':
+			globalHighScore = data.highScore;
+			break;
 	}
 }
 
 function sendJSON(json) {
 	json.session = sessionId;
+	json.user = user;
 	socket.send(JSON.stringify(json));
 }
 
@@ -370,7 +379,7 @@ function updateStats(data) {
 		switch (data.special) {
 			case 'loose':
 				loose();
-				setHighscore(data.score);
+				setHighscore(data.score, data.level);
 				break;
 			case 'win':
 				win();
@@ -385,12 +394,23 @@ function updateStats(data) {
 	missiles = data.missiles;
 	currentLevel = data.level;
 	score = data.score;
+
+	globalHighScore = data.highScore;
 }
 
-function setHighscore(score) {
+function setHighscore(score, level) {
 	if (score > highScore) {
 		highScore = score;
 		localStorage.setItem('highscore', highScore);
+
+		//send new score to server
+		sendJSON({
+			type: 'score',
+			highScore: {
+				score: score,
+				level: level,
+			},
+		});
 	}
 }
 
@@ -548,6 +568,10 @@ function createInput(type, placeholder) {
 }
 
 function onLogin(data) {
+	user = data.login;
+	highScore = data.highScore.score;
+
 	promptDiv.remove();
-	header.innerHTML = `Vesmirna hra - ${data.login}`;
+	header.innerHTML = `Vesmirna hra - ${user}`;
+
 }

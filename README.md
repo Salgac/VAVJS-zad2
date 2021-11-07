@@ -4,24 +4,24 @@ Cielom ulohy bude prepisat vesmirnu hru z client-side verzie na server-side verz
  
 ## Zadanie
 
-| #   |                                                                                                                           |     |                  |
-| --- | ------------------------------------------------------------------------------------------------------------------------- | --- | ---------------- |
-| 1   | prepisanie hlavnej logiky hry na server-side riesenie                                                                     | 1   | &#9745;          |
-| 2   | posielanie stlaceni klaves na server a ich spracovanie na serveri                                                         | 1   | &#9745;          |
-| 3   | vratenie aktualnej plochy hry zo serveru pomocou websocketov a vykreslenie aktualnej plochy cez canvas                    | 1   | &#9745;          |
-| 4   | vypisovanie aktualneho a najlepsieho skore a levelu zo serveru (per user/session)                                         | 1   | iba local        |
-| 5   | umoznenie viacerych nezavislych hier paralelne (aspon 1000)                                                               | 1   | &#9745;          |
-| 6   | umoznit ovladanie pomocou tlacitok zobrazenych na stranke (aj z inej session, cez zdielany pin)                           | 1   | bez pinu         |
-| 7   | na stranke umoznit registraciu a prihlasenie pouzivatelov - e-mail, login, heslo (2x pri registracii), meno a priezvisko  | 1   | &#9745;          |
-| 8   | zdielanie session medzi backendom (server) a frontedom (browser)                                                          | 1   | &#9745;          |
-| 9   | serverside ukladanie max skore a levelu pre prihlaseneho pouzivatela a neprihlaseneho pouzivatela                         | 1   | iba neprihlaseny |
+| #   |                                                                                                                           |     |         |
+| --- | ------------------------------------------------------------------------------------------------------------------------- | --- | ------- |
+| 1   | prepisanie hlavnej logiky hry na server-side riesenie                                                                     | 1   | &#9745; |
+| 2   | posielanie stlaceni klaves na server a ich spracovanie na serveri                                                         | 1   | &#9745; |
+| 3   | vratenie aktualnej plochy hry zo serveru pomocou websocketov a vykreslenie aktualnej plochy cez canvas                    | 1   | &#9745; |
+| 4   | vypisovanie aktualneho a najlepsieho skore a levelu zo serveru (per user/session)                                         | 1   | &#9745; |
+| 5   | umoznenie viacerych nezavislych hier paralelne (aspon 1000)                                                               | 1   | &#9745; |
+| 6   | umoznit ovladanie pomocou tlacitok zobrazenych na stranke (aj z inej session, cez zdielany pin)                           | 1   | bez pin |
+| 7   | na stranke umoznit registraciu a prihlasenie pouzivatelov - e-mail, login, heslo (2x pri registracii), meno a priezvisko  | 1   | &#9745; |
+| 8   | zdielanie session medzi backendom (server) a frontedom (browser)                                                          | 1   | &#9745; |
+| 9   | serverside ukladanie max skore a levelu pre prihlaseneho pouzivatela a neprihlaseneho pouzivatela                         | 1   | &#9745; |
 | 10  | admin rozhranie zobrazujuce tabulku pouzivatelov a aktualnych hier (meno ak je, session, pin) len pre pouzivatela "admin" | 1   |
 | 11  | import a export CSV udajov pouzivatelov (meno, email, heslo, max score, max level) len pre pouzivatela "admin"            | 1   |
-| 12  | zobrazit zoznam aktualne hranych hier s moznostou sledovania pre vsetkych pouzivatelov                                    | 1   | &#9745;          |
-| 13  | vyuzitie objektovej reprezentacie struktury stranky                                                                       | 1   | &#9744;          |
-| 14  | server vracia 1 staticku stranku (index.html, obrazky, js subory), ostatna komunikacia (plocha, interakcia) pouziva JSON  | 1   | &#9745;          |
+| 12  | zobrazit zoznam aktualne hranych hier s moznostou sledovania pre vsetkych pouzivatelov                                    | 1   | &#9745; |
+| 13  | vyuzitie objektovej reprezentacie struktury stranky                                                                       | 1   | &#9744; |
+| 14  | server vracia 1 staticku stranku (index.html, obrazky, js subory), ostatna komunikacia (plocha, interakcia) pouziva JSON  | 1   | &#9745; |
 | 15  | kontrola vstupov (email, login, heslo, kod, meno a priezvisko)                                                            | 1   |
-| SUM |                                                                                                                           | 15  | 8 (+ 2)          |
+| SUM |                                                                                                                           | 15  | 10      |
  
 ##### 13. Inspiracia:
 ```

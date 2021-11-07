@@ -9,7 +9,16 @@ class User {
 		this.pass = data.pass;
 		this.firstname = data.firstname;
 		this.lastname = data.lastname;
+
+		this.highScore = {
+			score: 0,
+			level: 0,
+		};
 	}
+}
+var highScore = {
+	score: 0,
+	level: 0,
 }
 
 const app = express();
@@ -51,6 +60,7 @@ socketServer.on('connection', (ws) => {
 	ws.send(JSON.stringify({
 		type: 'session',
 		session: newSessionId,
+		highScore: highScore,
 	}))
 
 	//send running sessions data
@@ -83,7 +93,9 @@ function onReceived(ws, message) {
 					game.resetGame();
 					break;
 				case 'update':
-					ws.send(JSON.stringify(game.getData()));
+					var data = game.getData();
+					data.highScore = highScore;
+					ws.send(JSON.stringify(data));
 					break;
 			}
 			break;
@@ -117,6 +129,7 @@ function onReceived(ws, message) {
 							value: 'login',
 							data: {
 								login: user.login,
+								highScore: user.highScore,
 							}
 						}));
 					} else {
@@ -128,6 +141,16 @@ function onReceived(ws, message) {
 						}));
 					}
 					break;
+			}
+			break;
+		case 'score':
+			if (message.user != '[N/A]') {
+				users[message.user].highScore = message.highScore;
+			}
+			//update global score
+			if (message.highScore.score > highScore.score) {
+				highScore = message.highScore;
+				onHighScoreUpdate();
 			}
 			break;
 	}
@@ -142,6 +165,14 @@ function onSessionUpdate() {
 		ws.send(JSON.stringify({
 			type: 'sessionList',
 			list: Object.keys(games),
+		})));
+}
+
+function onHighScoreUpdate() {
+	sockets.forEach((ws) =>
+		ws.send(JSON.stringify({
+			type: 'score',
+			highScore: highScore,
 		})));
 }
 
